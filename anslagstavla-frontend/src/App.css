@@ -1,18 +1,18 @@
 .tavlan {
-  max-width: 600px;
-  margin: 0 auto; /* Centrera anslagstavlan */
+  max-width: 410px;
+  margin: 0 auto;
   margin-top: 20px;
   padding: 20px;
-  border: 1px solid #ccc; /* Ram runt anslagstavlan */
+  border: 1px solid #ccc;
   border-radius: 8px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-  background-color: #f9f9f9; /* Ljus bakgrund */
+  background-color: #2f5f5f;
 }
 
 .tavlan h1 {
   text-align: center;
-  font-size: 24px;
-  color: #333;
+  font-size: 40px;
+  color: #ffffff;
 }
 
 .tavlan p {
@@ -53,36 +53,42 @@
 }
 
 ul {
-  list-style-type: none; /* Ta bort punktlista */
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); /* Skapa rutor med minst 200px breda */
+  grid-gap: 15px; /* Mellanrum mellan rutorna */
   padding: 0;
+  list-style-type: none; /* Ta bort standardpunktlista */
 }
 
 ul li {
   background-color: white;
-  padding: 10px;
-  margin-bottom: 10px;
-  border-radius: 4px;
+  padding: 15px;
+  border-radius: 8px;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
   display: flex;
+  flex-direction: column; /* Lägg in innehållet vertikalt */
   justify-content: space-between;
-  align-items: center;
+  align-items: flex-start;
+  word-wrap: break-word; /* Gör så att texten bryts om den är för lång */
 }
 
 ul li strong {
   font-size: 16px;
-  color: #333;
+  margin-bottom: 10px;
 }
 
 ul li button {
   padding: 5px 10px;
-  background-color: #28a745; /* Grön knapp */
+  background-color: #28a745;
   color: white;
   border: none;
   border-radius: 4px;
   cursor: pointer;
   transition: background-color 0.3s ease;
+  align-self: flex-end; /* Håll knappen till höger */
 }
 
 ul li button:hover {
-  background-color: #218838; /* Mörkare grön vid hover */
+  background-color: #218838;
 }
+
