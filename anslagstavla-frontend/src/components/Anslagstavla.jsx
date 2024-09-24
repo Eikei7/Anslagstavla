@@ -1,14 +1,15 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import UpdateMessageForm from './UpdateMessageForm'; // Importera den nya komponenten
 
-const API_URL = 'https://pam9y14ofd.execute-api.eu-north-1.amazonaws.com/dev/messages'; // Ersätt med din API URL från serverless deploy
+const API_URL = 'https://pam9y14ofd.execute-api.eu-north-1.amazonaws.com/dev/messages';
 
 const Anslagstavla = () => {
     const [messages, setMessages] = useState([]);
-    const [username, setUsername] = useState('');
-    const [text, setText] = useState('');
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
+    const [editingMessageId, setEditingMessageId] = useState(null); // Håll reda på vilket meddelande som redigeras
+    const [currentMessageText, setCurrentMessageText] = useState(''); // Håller det aktuella meddelandetexten
 
     const fetchMessages = async () => {
         try {
@@ -22,27 +23,33 @@ const Anslagstavla = () => {
         }
     };
 
-    const postMessage = async () => {
-        if (username.trim() === '' || text.trim() === '') return; // Prevent empty messages
+    const postMessage = async (username, text) => {
+        if (username.trim() === '' || text.trim() === '') return;
         try {
             await axios.post(`${API_URL}`, { username, text });
-            fetchMessages();  // Refresh messages
-            setText('');
+            fetchMessages();
         } catch (err) {
             setError('Kunde inte posta meddelandet');
         }
     };
 
-    const updateMessage = async (id) => {
-        const newText = prompt('Ange ny text').trim();
-        if (newText) {
-            try {
-                await axios.put(`${API_URL}/${id}`, { text: newText });
-                fetchMessages();
-            } catch (err) {
-                setError('Kunde inte uppdatera meddelandet');
-            }
+    const handleUpdate = async (id, newText) => {
+        try {
+            await axios.put(`${API_URL}/${id}`, { text: newText });
+            fetchMessages();
+            setEditingMessageId(null); // Stäng formuläret efter uppdatering
+        } catch (err) {
+            setError('Kunde inte uppdatera meddelandet');
         }
+    };
+
+    const openUpdateForm = (id, currentText) => {
+        setEditingMessageId(id);
+        setCurrentMessageText(currentText);
+    };
+
+    const closeUpdateForm = () => {
+        setEditingMessageId(null); // Stäng formuläret utan att uppdatera
     };
 
     useEffect(() => {
@@ -50,43 +57,29 @@ const Anslagstavla = () => {
     }, []);
 
     return (
-        <div className='tavlan'>
+        <div className="tavlan">
             <h1>Anslagstavla</h1>
             {error && <p style={{ color: 'red' }}>{error}</p>}
-            <input 
-                type="text" 
-                placeholder="Användarnamn" 
-                className='username'
-                value={username} 
-                onChange={(e) => setUsername(e.target.value)} 
-            />
-            <input 
-                type="text" 
-                placeholder="Meddelande"
-                className='message' 
-                value={text} 
-                onChange={(e) => setText(e.target.value)} 
-            />
-            <button 
-                onClick={postMessage} 
-                disabled={!username.trim() || !text.trim()} // Disable button if inputs are empty
-            >
-                Posta meddelande
-            </button>
-
             {loading ? (
                 <p>Laddar meddelanden...</p>
             ) : (
                 <ul>
-    {messages.map(({ id, username, text, createdAt }) => (
-        <li key={id}>
-            <div className="date">{createdAt}</div>
-            <div className="message">{text}</div>
-            <div className="username">{username}</div>
-            <button onClick={() => updateMessage(id)}>Ändra meddelande</button>
-        </li>
-    ))}
-</ul>
+                    {messages.map(({ id, username, text, createdAt }) => (
+                        <li key={id}>
+                            <strong>{username} ({createdAt}):</strong> {text}
+                            <button onClick={() => openUpdateForm(id, text)}>Ändra</button>
+                        </li>
+                    ))}
+                </ul>
+            )}
+
+            {editingMessageId && (
+                <UpdateMessageForm
+                    id={editingMessageId}
+                    currentText={currentMessageText}
+                    onUpdate={handleUpdate}
+                    onCancel={closeUpdateForm}
+                />
             )}
         </div>
     );

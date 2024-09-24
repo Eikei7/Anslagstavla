@@ -35,6 +35,7 @@ module.exports.createMessage = async (event) => {
         body: JSON.stringify({ id, username, text, createdAt }),
         headers: {
           'Access-Control-Allow-Origin': '*',
+          'Access-Control-Allow-Credentials': true,
         },
     };
 };
@@ -59,6 +60,7 @@ module.exports.updateMessage = async (event) => {
         body: JSON.stringify({ id, text }),
         headers: {
           'Access-Control-Allow-Origin': '*',
+          'Access-Control-Allow-Credentials': true,
         },
     };
 };
@@ -68,13 +70,26 @@ module.exports.getMessages = async () => {
         TableName: tableName,
     };
 
-    const result = await docClient.scan(params).promise();
-
-    return {
-        statusCode: 200,
-        body: JSON.stringify(result.Items),
-        headers: {
-          'Access-Control-Allow-Origin': '*',
-        },
-    };
+    try {
+        const result = await docClient.scan(params).promise();
+        console.log("Fetched messages:", result.Items); // Logga de hämtade meddelandena
+        return {
+            statusCode: 200,
+            body: JSON.stringify(result.Items),
+            headers: {
+              'Access-Control-Allow-Origin': '*',
+              'Access-Control-Allow-Credentials': true,
+            },
+        };
+    } catch (error) {
+        console.error("Error fetching messages:", error);
+        return {
+            statusCode: 500,
+            body: JSON.stringify({ error: "Kunde inte hämta meddelanden" }),
+            headers: {
+              'Access-Control-Allow-Origin': '*',
+              'Access-Control-Allow-Credentials': true,
+            },
+        };
+    }
 };
