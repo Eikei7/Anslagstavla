@@ -1,0 +1,62 @@
+org: frontenderik
+service: anslagstavla
+
+provider:
+  name: aws
+  runtime: nodejs20.x
+  region: eu-north-1
+  environment:
+    DYNAMODB_TABLE: anslagstavla
+  iamRoleStatements:
+  - Effect: "Allow"
+    Action:
+      - "dynamodb:PutItem"
+      - "dynamodb:UpdateItem"
+      - "dynamodb:GetItem"
+      - "dynamodb:Scan"
+    Resource:
+      - "arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.DYNAMODB_TABLE}"
+
+
+functions:
+  createMessage:
+    handler: handler.createMessage
+    events:
+      - http:
+          path: messages
+          method: post
+          cors: true
+
+          
+  updateMessage:
+    handler: handler.updateMessage
+    events:
+      - http:
+          path: messages/{id}
+          method: put
+          cors: true
+
+
+  getMessages:
+    handler: handler.getMessages
+    events:
+      - http:
+          path: messages
+          method: get
+          cors: true
+
+
+resources:
+  Resources:
+    AnslagstavlaDynamoDB:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: anslagstavla
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH
+        BillingMode: PAY_PER_REQUEST
+
