@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import UpdateMessageForm from './UpdateMessageForm'; // Importera den nya komponenten
 
 const API_URL = 'https://pam9y14ofd.execute-api.eu-north-1.amazonaws.com/dev/messages';
 
@@ -8,8 +7,10 @@ const Anslagstavla = () => {
     const [messages, setMessages] = useState([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
-    const [editingMessageId, setEditingMessageId] = useState(null); // Håll reda på vilket meddelande som redigeras
-    const [currentMessageText, setCurrentMessageText] = useState(''); // Håller det aktuella meddelandetexten
+    const [editingMessageId, setEditingMessageId] = useState(null);
+    const [currentMessageText, setCurrentMessageText] = useState('');
+    const [username, setUsername] = useState(''); // Lägg till state för användarnamn
+    const [text, setText] = useState(''); // Lägg till state för text
 
     const fetchMessages = async () => {
         try {
@@ -23,11 +24,13 @@ const Anslagstavla = () => {
         }
     };
 
-    const postMessage = async (username, text) => {
+    const postMessage = async () => {
         if (username.trim() === '' || text.trim() === '') return;
         try {
             await axios.post(`${API_URL}`, { username, text });
             fetchMessages();
+            setUsername(''); // Rensa input efter lyckad post
+            setText('');
         } catch (err) {
             setError('Kunde inte posta meddelandet');
         }
@@ -49,7 +52,7 @@ const Anslagstavla = () => {
     };
 
     const closeUpdateForm = () => {
-        setEditingMessageId(null); // Stäng formuläret utan att uppdatera
+        setEditingMessageId(null);
     };
 
     useEffect(() => {
@@ -60,26 +63,38 @@ const Anslagstavla = () => {
         <div className="tavlan">
             <h1>Anslagstavla</h1>
             {error && <p style={{ color: 'red' }}>{error}</p>}
+            <input 
+                type="text" 
+                placeholder="Användarnamn" 
+                value={username} 
+                onChange={(e) => setUsername(e.target.value)} 
+            />
+            <input 
+                type="text" 
+                placeholder="Meddelande" 
+                value={text} 
+                onChange={(e) => setText(e.target.value)} 
+            />
+            <button 
+                onClick={postMessage} 
+                disabled={!username.trim() || !text.trim()}
+            >
+                Posta Meddelande
+            </button>
+
             {loading ? (
                 <p>Laddar meddelanden...</p>
             ) : (
                 <ul>
                     {messages.map(({ id, username, text, createdAt }) => (
                         <li key={id}>
-                            <strong>{username} ({createdAt}):</strong> {text}
+                            <div className="date">{createdAt}</div>
+                            <div className="message">{text}</div>
+                            <div className="username">{username}</div>
                             <button onClick={() => openUpdateForm(id, text)}>Ändra</button>
                         </li>
                     ))}
                 </ul>
-            )}
-
-            {editingMessageId && (
-                <UpdateMessageForm
-                    id={editingMessageId}
-                    currentText={currentMessageText}
-                    onUpdate={handleUpdate}
-                    onCancel={closeUpdateForm}
-                />
             )}
         </div>
     );
