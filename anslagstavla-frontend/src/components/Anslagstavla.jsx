@@ -56,12 +56,14 @@ const Anslagstavla = () => {
             <input 
                 type="text" 
                 placeholder="Användarnamn" 
+                className='username'
                 value={username} 
                 onChange={(e) => setUsername(e.target.value)} 
             />
             <input 
                 type="text" 
-                placeholder="Meddelande" 
+                placeholder="Meddelande"
+                className='message' 
                 value={text} 
                 onChange={(e) => setText(e.target.value)} 
             />
@@ -81,7 +83,7 @@ const Anslagstavla = () => {
             <div className="date">{createdAt}</div>
             <div className="message">{text}</div>
             <div className="username">{username}</div>
-            <button onClick={() => updateMessage(id)}>Ändra</button>
+            <button onClick={() => updateMessage(id)}>Ändra meddelande</button>
         </li>
     ))}
 </ul>
