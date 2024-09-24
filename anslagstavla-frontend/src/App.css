@@ -55,7 +55,7 @@
 ul {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); /* Responsivt rutnät */
-  grid-gap: 15px; /* Mellanrum mellan rutorna */
+  grid-gap: 35px; /* Mellanrum mellan rutorna */
   padding: 0;
   list-style-type: none; /* Ta bort standardpunktlista */
 }
@@ -64,34 +64,47 @@ ul li {
   background-color: white;
   padding: 15px;
   border-radius: 8px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Lätt skugga */
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   align-items: center;
   text-align: center;
-  word-wrap: break-word; /* Gör så att texten bryts om den är för lång */
-  height: 200px; /* Sätt en höjd på rutan */
-  position: relative; /* Relativ position för att kunna positionera datum och tid */
+  word-wrap: break-word;
+  height: 200px;
+  position: relative;
+}
+
+ul li::after {
+  content: '';
+  position: absolute;
+  bottom: -15px; /* Position under pratbubblan */
+  left: 20px; /* Justera detta för att flytta pratbubblans spets */
+  border-width: 15px 15px 0;
+  border-style: solid;
+  border-color: #f1f1f1 transparent transparent transparent; /* Triangel med samma färg som pratbubblan */
 }
 
 ul li .date {
-  font-size: 14px;
-    color: gray; /* Grå text för datum och tid */
-    position: absolute;
-    top: 10px; /* Positionerar 10px från toppen */
-    left: 10px; /* Positionerar 10px från vänster */
-    text-align: left;
+  font-size: 16px;
+  color: gray; /* Grå text för datum och tid */
+  position: absolute;
+  top: 10px; /* Positionerar 10px från toppen */
+  left: 10px; /* Positionerar 10px från vänster */
+  text-align: left;
 }
 
 ul li .message {
-  font-size: 20px;
+  font-size: 26px;
   margin: auto 0; /* Placera meddelandet i mitten */
   word-wrap: break-word;
 }
 
 ul li .username {
   font-size: 20px;
+  position: absolute;
+  left: 20px; /* Positionerar 10px från vänster */
+  bottom: 20px; /* Positionerar 10px från botten */
   font-weight: bold; /* Fetare stil för användarnamnet */
   margin-top: auto; /* Placera namnet längst ned */
 }
@@ -104,7 +117,9 @@ ul li button {
   border-radius: 4px;
   cursor: pointer;
   transition: background-color 0.3s ease;
-  align-self: flex-end; /* Håll knappen till höger */
+  align-self: flex-end; /* Placera knappen längst ned till höger */
+  width: auto; /* Se till att knappen inte tar upp hela bredden */
+  max-width: 100px; /* Sätter en maxbredd för knappen */
 }
 
 ul li button:hover {
