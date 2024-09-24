@@ -71,7 +71,7 @@ const Anslagstavla = () => {
                 onClick={postMessage} 
                 disabled={!username.trim() || !text.trim()} // Disable button if inputs are empty
             >
-                Posta Meddelande
+                Posta meddelande
             </button>
 
             {loading ? (
