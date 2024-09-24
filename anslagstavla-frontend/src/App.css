@@ -1,0 +1,88 @@
+.tavlan {
+  max-width: 600px;
+  margin: 0 auto; /* Centrera anslagstavlan */
+  margin-top: 20px;
+  padding: 20px;
+  border: 1px solid #ccc; /* Ram runt anslagstavlan */
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  background-color: #f9f9f9; /* Ljus bakgrund */
+}
+
+.tavlan h1 {
+  text-align: center;
+  font-size: 24px;
+  color: #333;
+}
+
+.tavlan p {
+  text-align: center;
+  margin-bottom: 20px;
+  font-size: 16px;
+}
+
+.tavlan input {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 16px;
+  box-sizing: border-box;
+}
+
+.tavlan button {
+  width: 100%;
+  padding: 10px;
+  background-color: #007BFF; /* Blå knapp */
+  color: white;
+  font-size: 16px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.tavlan button:disabled {
+  background-color: #aaa; /* Grå för inaktiv knapp */
+  cursor: not-allowed;
+}
+
+.tavlan button:hover:enabled {
+  background-color: #0056b3; /* Mörkare blå vid hover */
+}
+
+ul {
+  list-style-type: none; /* Ta bort punktlista */
+  padding: 0;
+}
+
+ul li {
+  background-color: white;
+  padding: 10px;
+  margin-bottom: 10px;
+  border-radius: 4px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+ul li strong {
+  font-size: 16px;
+  color: #333;
+}
+
+ul li button {
+  padding: 5px 10px;
+  background-color: #28a745; /* Grön knapp */
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+ul li button:hover {
+  background-color: #218838; /* Mörkare grön vid hover */
+}
