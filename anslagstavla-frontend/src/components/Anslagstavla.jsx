@@ -76,13 +76,15 @@ const Anslagstavla = () => {
                 <p>Laddar meddelanden...</p>
             ) : (
                 <ul>
-                    {messages.map(({ id, username, text, createdAt }) => (
-                        <li key={id}>
-                            <strong>{username} ({createdAt}):</strong> {text} 
-                            
-                        </li>
-                    ))}
-                </ul>
+    {messages.map(({ id, username, text, createdAt }) => (
+        <li key={id}>
+            <div className="date">{createdAt}</div>
+            <div className="message">{text}</div>
+            <div className="username">{username}</div>
+            <button onClick={() => updateMessage(id)}>Ändra</button>
+        </li>
+    ))}
+</ul>
             )}
         </div>
     );

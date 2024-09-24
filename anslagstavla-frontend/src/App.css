@@ -54,7 +54,7 @@
 
 ul {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); /* Skapa rutor med minst 200px breda */
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); /* Responsivt rutnät */
   grid-gap: 15px; /* Mellanrum mellan rutorna */
   padding: 0;
   list-style-type: none; /* Ta bort standardpunktlista */
@@ -64,17 +64,36 @@ ul li {
   background-color: white;
   padding: 15px;
   border-radius: 8px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Lätt skugga */
   display: flex;
-  flex-direction: column; /* Lägg in innehållet vertikalt */
+  flex-direction: column;
   justify-content: space-between;
-  align-items: flex-start;
+  align-items: center;
+  text-align: center;
   word-wrap: break-word; /* Gör så att texten bryts om den är för lång */
+  height: 200px; /* Sätt en höjd på rutan */
+  position: relative; /* Relativ position för att kunna positionera datum och tid */
 }
 
-ul li strong {
-  font-size: 16px;
-  margin-bottom: 10px;
+ul li .date {
+  font-size: 14px;
+    color: gray; /* Grå text för datum och tid */
+    position: absolute;
+    top: 10px; /* Positionerar 10px från toppen */
+    left: 10px; /* Positionerar 10px från vänster */
+    text-align: left;
+}
+
+ul li .message {
+  font-size: 20px;
+  margin: auto 0; /* Placera meddelandet i mitten */
+  word-wrap: break-word;
+}
+
+ul li .username {
+  font-size: 20px;
+  font-weight: bold; /* Fetare stil för användarnamnet */
+  margin-top: auto; /* Placera namnet längst ned */
 }
 
 ul li button {
@@ -91,4 +110,5 @@ ul li button {
 ul li button:hover {
   background-color: #218838;
 }
+
 
