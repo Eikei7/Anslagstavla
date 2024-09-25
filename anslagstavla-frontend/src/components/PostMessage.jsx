@@ -13,16 +13,20 @@ const PostMessage = ({ onPostSuccess }) => {
     const postMessage = async () => {
         if (username.trim() === '' || text.trim() === '') return;
         try {
-            await axios.post(`${API_URL}`, { username, text });
+            const response = await axios.post(`${API_URL}`, { username, text });
+            const { id } = response.data; // Få det returnerade id från servern
+
             setUsername('');
             setText('');
-            setConfirmation('Meddelandet har publicerats!'); // Sätt bekräftelsen
+
+            // Inkludera id i bekräftelsemeddelandet
+            setConfirmation(`Meddelandet har publicerats! Ange detta ID om du behöver ändra ditt inlägg: ${id}`);
+
             if (onPostSuccess) onPostSuccess();
 
-            // Nollställ bekräftelsen efter 3 sekunder
             setTimeout(() => {
                 setConfirmation('');
-            }, 3000);
+            }, 10000);
         } catch (err) {
             setError('Kunde inte posta meddelandet');
         }
@@ -31,7 +35,7 @@ const PostMessage = ({ onPostSuccess }) => {
     return (
         <div className="tavlan">
             {error && <p style={{ color: 'red' }}>{error}</p>}
-            {confirmation && <p className="confirmation-message">{confirmation}</p>} {/* Bekräftelsemeddelande */}
+            {confirmation && <p className="confirmation-message">{confirmation}</p>}
 
             <input 
                 type="text" 
