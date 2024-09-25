@@ -1,7 +1,6 @@
 body {
   display: flex;
   justify-content: center; /* Centrerar innehållet horisontellt */
-  align-items: center; /* Centrerar innehållet vertikalt */
   min-height: 100vh; /* Ser till att innehållet fyller hela höjden */
   margin: 0;
 }
@@ -10,7 +9,7 @@ body {
   max-width: 410px;
   min-height: 50vh;
   margin: 0 auto;
-  margin-top: 20px;
+  margin-top: 70px;
   padding: 20px;
   border: 1px solid #ccc;
   border-radius: 8px;
@@ -138,7 +137,7 @@ ul li button {
   transition: background-color 0.3s ease;
   align-self: flex-end; /* Placera knappen längst ned till höger */
   width: auto; /* Se till att knappen inte tar upp hela bredden */
-  max-width: 100px; /* Sätter en maxbredd för knappen */
+  max-width: 180px; /* Sätter en maxbredd för knappen */
 }
 
 ul li button:hover {

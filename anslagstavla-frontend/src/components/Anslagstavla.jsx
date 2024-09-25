@@ -79,7 +79,7 @@ const Anslagstavla = () => {
                             <div className="date">{formatDate(createdAt)}</div>
                             <div className="message">{text}</div>
                             <div className="username">{username}</div>
-                            <button onClick={() => openUpdateForm(id, text)}>Ändra</button>
+                            <button onClick={() => openUpdateForm(id, text)}>Ändra meddelandet</button>
                         </li>
                     ))}
                 </ul>

@@ -24,7 +24,7 @@ const PostMessage = ({ onPostSuccess }) => {
 
     return (
         <div className="tavlan">
-            <h1>Skriv ett meddelande</h1>
+            
             {error && <p style={{ color: 'red' }}>{error}</p>}
             <input 
                 type="text" 
@@ -32,15 +32,15 @@ const PostMessage = ({ onPostSuccess }) => {
                 value={username} 
                 onChange={(e) => setUsername(e.target.value)} 
             />
-            <input 
+            <textarea 
                 type="text" 
                 className='message-input'
-                placeholder="Meddelande" 
+                placeholder="Skriv ditt meddelande här..." 
                 value={text} 
                 onChange={(e) => setText(e.target.value)} 
             />
             <button onClick={postMessage} disabled={!username.trim() || !text.trim()}>
-                Skicka meddelande
+                Publicera
             </button>
         </div>
     );
