@@ -5,18 +5,20 @@ const tableName = process.env.DYNAMODB_TABLE;
 module.exports.createMessage = async (event) => {
     const { username, text } = JSON.parse(event.body);
     const id = Date.now().toString();
+
+    // Använd toLocaleString för att säkerställa korrekt svensk tidzon
     const formatDate = (date) => {
-      const months = ["jan", "feb", "mar", "apr", "maj", "jun", "jul", "aug", "sep", "okt", "nov", "dec"];
-      
-      const day = date.getDate().toString().padStart(2, '0'); // Få dagens datum med två siffror
-      const month = months[date.getMonth()]; // Få månadsnamnet från arrayen
-      const year = date.getFullYear(); // Få årtalet
-      const hours = date.getHours().toString().padStart(2, '0'); // Få timmar med två siffror
-      const minutes = date.getMinutes().toString().padStart(2, '0'); // Få minuter med två siffror
-  
-      return `${day} ${month} ${year} ${hours}:${minutes}`;
-  };
-    const createdAt = formatDate(new Date());
+      return date.toLocaleString('sv-SE', {
+        timeZone: 'Europe/Stockholm', // Svensk tidzon (CET/CEST)
+        year: 'numeric',
+        month: 'short',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit',
+      });
+    };
+
+    const createdAt = formatDate(new Date()); // Få rätt formaterat datum och tid
 
     const params = {
         TableName: tableName,
@@ -39,6 +41,7 @@ module.exports.createMessage = async (event) => {
         },
     };
 };
+
 
 module.exports.updateMessage = async (event) => {
     const { id } = event.pathParameters;

@@ -3,6 +3,24 @@ import axios from 'axios';
 
 const API_URL = 'https://pam9y14ofd.execute-api.eu-north-1.amazonaws.com/dev/messages';
 
+const formatDate = (dateString) => {
+    const date = new Date(dateString);
+
+    // Justera tiden till svensk tidzon (CET/CEST) beroende på tidsskillnaden från UTC
+    const offset = 120; // För sommartid (CEST), annars använd 60 för vintertid (CET)
+    const localDate = new Date(date.getTime() + offset * 60 * 1000); // Justera tiden
+
+    return localDate.toLocaleString('sv-SE', {
+        timeZone: 'Europe/Stockholm',  // Svensk tidzon
+        year: 'numeric',
+        month: 'short',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit',
+    });
+};
+
+
 const Anslagstavla = () => {
     const [messages, setMessages] = useState([]);
     const [loading, setLoading] = useState(false);
@@ -89,7 +107,7 @@ const Anslagstavla = () => {
                 <ul>
                     {messages.map(({ id, username, text, createdAt }) => (
                         <li key={id}>
-                            <div className="date">{createdAt}</div>
+                            <div className="date">{formatDate(createdAt)}</div>
                             <div className="message">{text}</div>
                             <div className="username">{username}</div>
                             <button onClick={() => openUpdateForm(id, text)}>Ändra</button>
