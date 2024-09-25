@@ -1,3 +1,11 @@
+body {
+  display: flex;
+  justify-content: center; /* Centrerar innehållet horisontellt */
+  align-items: center; /* Centrerar innehållet vertikalt */
+  min-height: 100vh; /* Ser till att innehållet fyller hela höjden */
+  margin: 0;
+}
+
 .tavlan {
   max-width: 410px;
   margin: 0 auto;
@@ -126,4 +134,33 @@ ul li button:hover {
   background-color: #218838;
 }
 
+/* Styling för navigeringen och centrering */
+.nav-container {
+  display: flex; /* Flexbox för att arrangera länkarna horisontellt */
+  justify-content: center; /* Centrerar navigeringen horisontellt */
+  align-items: center; /* Centrerar länkarna vertikalt inom sin container */
+  gap: 20px; /* Utrymme mellan navigeringslänkarna */
+  padding: 10px;
+  max-width: 420px;
+  background-color: #f0f0f0;
+  border-radius: 5px;
+  margin-top: 20px; /* Skapa lite utrymme ovanför navigeringen */
+}
+
+/* Styling för varje länk */
+.nav-item {
+  font-size: 18px;
+}
+
+/* Styling för länkar */
+.nav-item a {
+  text-decoration: none;
+  color: #007BFF; /* Länkfärg */
+  font-weight: bold;
+}
+
+.nav-item a:hover {
+  color: #0056b3; /* Länkfärg vid hovring */
+  text-decoration: underline;
+}
 

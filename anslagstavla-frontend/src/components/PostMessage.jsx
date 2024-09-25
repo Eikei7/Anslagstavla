@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import '../App.css';
+import { Link } from 'react-router-dom';
 
 const API_URL = 'https://pam9y14ofd.execute-api.eu-north-1.amazonaws.com/dev/messages';
 
@@ -38,7 +39,7 @@ const PostMessage = ({ onPostSuccess }) => {
                 onChange={(e) => setText(e.target.value)} 
             />
             <button onClick={postMessage} disabled={!username.trim() || !text.trim()}>
-                Posta Meddelande
+                Skicka meddelande
             </button>
         </div>
     );
