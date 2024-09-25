@@ -8,6 +8,7 @@ body {
 
 .tavlan {
   max-width: 410px;
+  min-height: 50vh;
   margin: 0 auto;
   margin-top: 20px;
   padding: 20px;
@@ -37,6 +38,16 @@ body {
   border-radius: 4px;
   font-size: 16px;
   box-sizing: border-box;
+}
+
+.message-input {
+  width: 100%; /* Full bredd på input-fältet */
+  height: 200px; /* Gör input-fältet högre */
+  padding: 10px; /* Lägg till lite padding för bättre textinmatning */
+  font-size: 24px; /* Större text i input-fältet */
+  border-radius: 5px; /* Ger input-fältet rundade hörn */
+  border: 1px solid #ccc; /* Lätt gräns runt input-fältet */
+  box-sizing: border-box; /* Gör så att padding och border inte påverkar fältets totala bredd */
 }
 
 .tavlan button {
@@ -136,15 +147,20 @@ ul li button:hover {
 
 /* Styling för navigeringen och centrering */
 .nav-container {
+  position: fixed; /* Gör att navigeringen stannar på en fast position */
+  top: 0; /* Placera navigeringen längst upp */
+  left: 50%; /* Justera till vänster */
+  transform: translateX(-50%);
   display: flex; /* Flexbox för att arrangera länkarna horisontellt */
   justify-content: center; /* Centrerar navigeringen horisontellt */
   align-items: center; /* Centrerar länkarna vertikalt inom sin container */
   gap: 20px; /* Utrymme mellan navigeringslänkarna */
   padding: 10px;
   max-width: 420px;
-  background-color: #f0f0f0;
+  background-color: #9b6192;
   border-radius: 5px;
   margin-top: 20px; /* Skapa lite utrymme ovanför navigeringen */
+  z-index: 1000;
 }
 
 /* Styling för varje länk */
@@ -155,7 +171,8 @@ ul li button:hover {
 /* Styling för länkar */
 .nav-item a {
   text-decoration: none;
-  color: #007BFF; /* Länkfärg */
+  text-transform: uppercase;
+  color: #ffffff; /* Länkfärg */
   font-weight: bold;
 }
 

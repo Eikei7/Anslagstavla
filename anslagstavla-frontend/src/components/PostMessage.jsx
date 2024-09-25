@@ -34,6 +34,7 @@ const PostMessage = ({ onPostSuccess }) => {
             />
             <input 
                 type="text" 
+                className='message-input'
                 placeholder="Meddelande" 
                 value={text} 
                 onChange={(e) => setText(e.target.value)} 
