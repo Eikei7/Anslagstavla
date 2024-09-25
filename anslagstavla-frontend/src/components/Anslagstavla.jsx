@@ -16,7 +16,8 @@ const Anslagstavla = () => {
         try {
             setLoading(true);
             const response = await axios.get(`${API_URL}`);
-            setMessages(response.data);
+            const sortedMessages = response.data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+            setMessages(sortedMessages);
             setLoading(false);
         } catch (err) {
             setError('Kunde inte hämta meddelanden');
