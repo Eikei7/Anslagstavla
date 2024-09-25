@@ -9,6 +9,7 @@ const PostMessage = ({ onPostSuccess }) => {
     const [text, setText] = useState('');
     const [error, setError] = useState('');
     const [confirmation, setConfirmation] = useState(''); // Ny state-variabel för bekräftelse
+    const [charCount, setCharCount] = useState(0); // För att hålla koll på teckenräkningen
 
     const postMessage = async () => {
         if (username.trim() === '' || text.trim() === '') return;
@@ -18,6 +19,7 @@ const PostMessage = ({ onPostSuccess }) => {
 
             setUsername('');
             setText('');
+            setCharCount(0); // Nollställ teckenräknaren
 
             // Inkludera id i bekräftelsemeddelandet
             setConfirmation(`Meddelandet har publicerats! Ange detta ID om du behöver ändra ditt inlägg: ${id}`);
@@ -29,6 +31,15 @@ const PostMessage = ({ onPostSuccess }) => {
             }, 10000);
         } catch (err) {
             setError('Kunde inte posta meddelandet');
+        }
+    };
+
+    // Hantera textinput med begränsning och teckenräkning
+    const handleTextChange = (e) => {
+        const value = e.target.value;
+        if (value.length <= 75) { // Max 75 tecken
+            setText(value);
+            setCharCount(value.length); // Uppdatera teckenräknare
         }
     };
 
@@ -46,9 +57,12 @@ const PostMessage = ({ onPostSuccess }) => {
             <textarea 
                 className='message-input'
                 placeholder="Skriv ditt meddelande här..." 
-                value={text} 
-                onChange={(e) => setText(e.target.value)} 
+                value={text}
+                onChange={handleTextChange} // Använd valideringsfunktionen
+                maxLength={75} // Begränsa till max 75 tecken
             />
+            <p style={{ color: 'white' }}>{charCount}/75 tecken</p> {/* Vit färg på teckenräknare */}
+
             <button onClick={postMessage} disabled={!username.trim() || !text.trim()}>
                 Publicera
             </button>

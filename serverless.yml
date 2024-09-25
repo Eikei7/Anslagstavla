@@ -69,3 +69,11 @@ package:
     - .git/**
     - tests/**
     - docs/**
+
+plugins:
+  - serverless-s3-sync
+
+custom:
+  s3Sync:
+    - bucketName: anslagstavla-erik
+      localDir: anslagstavla-frontend/build
