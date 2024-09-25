@@ -46,10 +46,14 @@ module.exports.createMessage = async (event) => {
 module.exports.updateMessage = async (event) => {
     const { id } = event.pathParameters;
     const { text } = JSON.parse(event.body);
+
     const params = {
         TableName: tableName,
         Key: { id },
-        UpdateExpression: 'set text = :text',
+        UpdateExpression: 'set #textField = :text',
+        ExpressionAttributeNames: {
+            '#textField': 'text',
+        },
         ExpressionAttributeValues: {
             ':text': text,
         },
@@ -62,11 +66,12 @@ module.exports.updateMessage = async (event) => {
         statusCode: 200,
         body: JSON.stringify({ id, text }),
         headers: {
-          'Access-Control-Allow-Origin': '*',
-          'Access-Control-Allow-Credentials': true,
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Credentials': true,
         },
     };
 };
+
 
 module.exports.getMessages = async () => {
     const params = {

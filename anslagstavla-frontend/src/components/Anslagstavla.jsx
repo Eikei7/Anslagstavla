@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Link } from 'react-router-dom';
 
 const API_URL = 'https://pam9y14ofd.execute-api.eu-north-1.amazonaws.com/dev/messages';
 
@@ -19,15 +18,14 @@ const formatDate = (dateString) => {
     });
 };
 
-
 const Anslagstavla = () => {
     const [messages, setMessages] = useState([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
     const [editingMessageId, setEditingMessageId] = useState(null);
     const [currentMessageText, setCurrentMessageText] = useState('');
-    const [username, setUsername] = useState(''); // Lägg till state för användarnamn
-    const [text, setText] = useState(''); // Lägg till state för text
+    const [inputMessageId, setInputMessageId] = useState(''); // För inmatning av ID
+    const [updateError, setUpdateError] = useState(''); // För uppdateringsfel
 
     const fetchMessages = async () => {
         try {
@@ -43,12 +41,18 @@ const Anslagstavla = () => {
     };
 
     const handleUpdate = async (id, newText) => {
+        if (inputMessageId !== id) {
+            setUpdateError('Autentiseringsfel: Felaktigt ID');
+            return;
+        }
+
         try {
             await axios.put(`${API_URL}/${id}`, { text: newText });
             fetchMessages();
             setEditingMessageId(null); // Stäng formuläret efter uppdatering
+            setUpdateError(''); // Återställ eventuella felmeddelanden
         } catch (err) {
-            setError('Kunde inte uppdatera meddelandet');
+            setUpdateError('Kunde inte uppdatera meddelandet'); // Visar fel i modalen
         }
     };
 
@@ -59,6 +63,8 @@ const Anslagstavla = () => {
 
     const closeUpdateForm = () => {
         setEditingMessageId(null);
+        setInputMessageId(''); // Återställ inputfältet
+        setUpdateError(''); // Återställ eventuella fel
     };
 
     useEffect(() => {
@@ -66,9 +72,9 @@ const Anslagstavla = () => {
     }, []);
 
     return (
-            <div className="tavlan">
+        <div className="tavlan">
             <h1>Anslagstavlan</h1>
-            {error && <p style={{ color: 'red' }}>{error}</p>}
+            {error && <p style={{ color: 'red' }}>{error}</p>} {/* Felmeddelande för att hämta meddelanden */}
 
             {loading ? (
                 <p>Laddar meddelanden...</p>
@@ -79,6 +85,31 @@ const Anslagstavla = () => {
                             <div className="date">{formatDate(createdAt)}</div>
                             <div className="message">{text}</div>
                             <div className="username">{username}</div>
+
+                            {/* Visa uppdateringsformulär i en modal om det aktuella meddelandet redigeras */}
+                            {editingMessageId === id && (
+                                <div className="modal-overlay">
+                                    <div className="modal-content">
+                                        <h2>Ändra meddelandet</h2>
+                                        {updateError && <p style={{ color: 'red' }}>{updateError}</p>} {/* Visar fel i modalen */}
+                                        <input 
+                                            type="text" 
+                                            placeholder="Ange nytt meddelande"
+                                            value={currentMessageText}
+                                            onChange={(e) => setCurrentMessageText(e.target.value)}
+                                        />
+                                        <input 
+                                            type="text" 
+                                            placeholder="Ange meddelandets ID"
+                                            value={inputMessageId}
+                                            onChange={(e) => setInputMessageId(e.target.value)} // Spara inmatat ID
+                                        />
+                                        <button onClick={() => handleUpdate(id, currentMessageText)}>Spara ändringar</button>
+                                        <button onClick={closeUpdateForm}>Avbryt</button>
+                                    </div>
+                                </div>
+                            )}
+
                             <button onClick={() => openUpdateForm(id, text)}>Ändra meddelandet</button>
                         </li>
                     ))}
