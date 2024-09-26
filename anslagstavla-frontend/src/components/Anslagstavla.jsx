@@ -72,7 +72,7 @@ const Anslagstavla = () => {
 
     return (
         <div className="tavlan">
-            <h1>Anslagstavlan</h1>
+            <h1>Shui - Anslagstavlan</h1>
             {error && <p style={{ color: 'red' }}>{error}</p>} {/* Felmeddelande för att hämta meddelanden */}
 
             {loading ? (
@@ -103,7 +103,7 @@ const Anslagstavla = () => {
                                             value={inputMessageId}
                                             onChange={(e) => setInputMessageId(e.target.value)} // Spara inmatat ID
                                         />
-                                        <button onClick={() => handleUpdate(id, currentMessageText)}>Spara ändringar</button>
+                                        <button onClick={() => handleUpdate(id, currentMessageText)}>Spara</button>
                                         <button onClick={closeUpdateForm}>Avbryt</button>
                                     </div>
                                 </div>

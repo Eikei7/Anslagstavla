@@ -1,7 +1,9 @@
+@import url(https://fonts.googleapis.com/css?family=Fira+Sans:100,200,300,400,regular,italic,500,600,700,800,900);
+
 body {
   display: flex;
-  justify-content: center; /* Centrerar innehållet horisontellt */
-  min-height: 100vh; /* Ser till att innehållet fyller hela höjden */
+  justify-content: center; 
+  min-height: 100vh;
   margin: 0;
 }
 
@@ -40,18 +42,20 @@ body {
   margin-bottom: 10px;
   border: 1px solid #ddd;
   border-radius: 4px;
-  font-size: 20px;
+  font-size: 22px;
   box-sizing: border-box;
+  font-family: 'Fira Sans', sans-serif;
 }
 
 .message-input {
-  width: 100%; /* Full bredd på input-fältet */
-  height: 200px; /* Gör input-fältet högre */
-  padding: 10px; /* Lägg till lite padding för bättre textinmatning */
-  font-size: 24px; /* Större text i input-fältet */
-  border-radius: 5px; /* Ger input-fältet rundade hörn */
-  border: 1px solid #ccc; /* Lätt gräns runt input-fältet */
-  box-sizing: border-box; /* Gör så att padding och border inte påverkar fältets totala bredd */
+  width: 100%;
+  height: 200px;
+  padding: 10px; 
+  font-size: 22px; 
+  border-radius: 5px; 
+  border: 1px solid #ccc;
+  box-sizing: border-box;
+  font-family: 'Fira Sans', sans-serif;
 }
 
 .tavlan button {
@@ -219,6 +223,8 @@ ul li button:hover {
 
 .modal-content button {
   padding: 10px;
+  width: 100px;
+  height: 40px;
   margin-right: 10px;
   background-color: #683257;
   color: white;
