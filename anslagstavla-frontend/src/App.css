@@ -95,6 +95,7 @@ ul li {
   align-items: center;
   text-align: center;
   word-wrap: break-word;
+  overflow-wrap: break-word;
   height: 200px;
   position: relative;
 }
@@ -121,7 +122,6 @@ ul li .date {
 ul li .message {
   font-size: 20px;
   margin: auto 0; /* Placera meddelandet i mitten */
-  word-wrap: break-word;
 }
 
 ul li .username {

@@ -26,9 +26,6 @@ const PostMessage = ({ onPostSuccess }) => {
 
             if (onPostSuccess) onPostSuccess();
 
-            setTimeout(() => {
-                setConfirmation('');
-            }, 10000);
         } catch (err) {
             setError('Kunde inte posta meddelandet');
         }

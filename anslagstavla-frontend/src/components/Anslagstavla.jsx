@@ -5,11 +5,9 @@ const API_URL = 'https://pam9y14ofd.execute-api.eu-north-1.amazonaws.com/dev/mes
 
 const formatDate = (dateString) => {
     const date = new Date(dateString);
-    const offset = 120;
-    const localDate = new Date(date.getTime() + offset * 60 * 1000);
 
-    return localDate.toLocaleString('sv-SE', {
-        timeZone: 'Europe/Stockholm',
+    return date.toLocaleString('sv-SE', {
+        timeZone: 'Europe/Stockholm', // Svensk tidzon (CET/CEST)
         year: 'numeric',
         month: 'short',
         day: '2-digit',
@@ -17,6 +15,7 @@ const formatDate = (dateString) => {
         minute: '2-digit',
     });
 };
+
 
 const Anslagstavla = () => {
     const [messages, setMessages] = useState([]);
