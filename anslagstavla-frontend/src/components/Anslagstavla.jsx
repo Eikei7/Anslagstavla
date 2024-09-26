@@ -16,7 +16,6 @@ const formatDate = (dateString) => {
     });
 };
 
-
 const Anslagstavla = () => {
     const [messages, setMessages] = useState([]);
     const [loading, setLoading] = useState(false);
@@ -25,12 +24,22 @@ const Anslagstavla = () => {
     const [currentMessageText, setCurrentMessageText] = useState('');
     const [inputMessageId, setInputMessageId] = useState(''); // För inmatning av ID
     const [updateError, setUpdateError] = useState(''); // För uppdateringsfel
+    const [sortOrder, setSortOrder] = useState('newest'); // Håller reda på sorteringsordning
+    const [filterUser, setFilterUser] = useState(''); // Håller reda på vald användare för filtrering
 
     const fetchMessages = async () => {
         try {
             setLoading(true);
             const response = await axios.get(`${API_URL}`);
-            const sortedMessages = response.data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+            let sortedMessages = response.data;
+            
+            // Sortera efter valt sorteringsordning
+            if (sortOrder === 'newest') {
+                sortedMessages = sortedMessages.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+            } else {
+                sortedMessages = sortedMessages.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+            }
+
             setMessages(sortedMessages);
             setLoading(false);
         } catch (err) {
@@ -66,20 +75,47 @@ const Anslagstavla = () => {
         setUpdateError(''); // Återställ eventuella fel
     };
 
+    const handleSortToggle = () => {
+        setSortOrder(sortOrder === 'newest' ? 'oldest' : 'newest');
+    };
+
+    const handleFilterChange = (e) => {
+        setFilterUser(e.target.value);
+    };
+
     useEffect(() => {
         fetchMessages();
-    }, []);
+    }, [sortOrder]);
+
+    // Filtrera meddelanden efter användarnamn om ett användarnamn är valt
+    const filteredMessages = filterUser 
+        ? messages.filter(message => message.username.toLowerCase().includes(filterUser.toLowerCase())) 
+        : messages;
 
     return (
         <div className="tavlan">
             <h1>Shui - Anslagstavlan</h1>
             {error && <p style={{ color: 'red' }}>{error}</p>} {/* Felmeddelande för att hämta meddelanden */}
+            <img src="noticeboard.jpeg" width="410" alt="Anslagstavla" />
+            {/* Sorterings- och filtreringsfunktioner */}
+            <div>
+                <button onClick={handleSortToggle}>
+                    Sortera efter: {sortOrder === 'newest' ? 'Nyast först' : 'Äldst först'}
+                </button>
+
+                <input 
+                    type="text"
+                    placeholder="Filtrera efter användarnamn"
+                    value={filterUser}
+                    onChange={handleFilterChange}
+                />
+            </div>
 
             {loading ? (
                 <p>Laddar meddelanden...</p>
             ) : (
                 <ul>
-                    {messages.map(({ id, username, text, createdAt }) => (
+                    {filteredMessages.map(({ id, username, text, createdAt }) => (
                         <li key={id}>
                             <div className="date">{formatDate(createdAt)}</div>
                             <div className="message">{text}</div>
