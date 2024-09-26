@@ -14,8 +14,14 @@ provider:
       - "dynamodb:UpdateItem"
       - "dynamodb:GetItem"
       - "dynamodb:Scan"
+      - "s3:PutObject"
+      - "s3:PutObjectAcl"
+      - "s3:DeleteObject"
+      - "s3:ListBucket"
     Resource:
       - "arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.DYNAMODB_TABLE}"
+      - "arn:aws:s3:::anslagstavla-erik"
+      - "arn:aws:s3:::anslagstavla-erik/*"
 
 
 functions:
