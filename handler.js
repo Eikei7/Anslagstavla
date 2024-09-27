@@ -6,7 +6,6 @@ module.exports.createMessage = async (event) => {
     const { username, text } = JSON.parse(event.body);
     const id = Date.now().toString();
 
-    // Använd toLocaleString för att säkerställa korrekt svensk tidzon
     const formatDate = (date) => {
       return date.toLocaleString('sv-SE', {
         timeZone: 'Europe/Stockholm', // Svensk tidzon (CET/CEST)
@@ -18,7 +17,7 @@ module.exports.createMessage = async (event) => {
       });
     };
 
-    const createdAt = formatDate(new Date()); // Få rätt formaterat datum och tid
+    const createdAt = formatDate(new Date());
 
     const params = {
         TableName: tableName,
@@ -41,7 +40,6 @@ module.exports.createMessage = async (event) => {
         },
     };
 };
-
 
 module.exports.updateMessage = async (event) => {
     const { id } = event.pathParameters;
@@ -72,7 +70,6 @@ module.exports.updateMessage = async (event) => {
     };
 };
 
-
 module.exports.getMessages = async () => {
     const params = {
         TableName: tableName,
@@ -80,7 +77,7 @@ module.exports.getMessages = async () => {
 
     try {
         const result = await docClient.scan(params).promise();
-        console.log("Fetched messages:", result.Items); // Logga de hämtade meddelandena
+        console.log("Fetched messages:", result.Items);
         return {
             statusCode: 200,
             body: JSON.stringify(result.Items),
@@ -97,6 +94,42 @@ module.exports.getMessages = async () => {
             headers: {
               'Access-Control-Allow-Origin': '*',
               'Access-Control-Allow-Credentials': true,
+            },
+        };
+    }
+};
+
+module.exports.getMessagesByUsername = async (event) => {
+    const { username } = event.pathParameters;
+
+    const params = {
+        TableName: tableName,
+        FilterExpression: "#username = :usernameValue",
+        ExpressionAttributeNames: {
+            "#username": "username",
+        },
+        ExpressionAttributeValues: {
+            ":usernameValue": username,
+        },
+    };
+
+    try {
+        const result = await docClient.scan(params).promise();
+        return {
+            statusCode: 200,
+            body: JSON.stringify(result.Items),
+            headers: {
+                'Access-Control-Allow-Origin': '*',
+                'Access-Control-Allow-Credentials': true,
+            },
+        };
+    } catch (error) {
+        return {
+            statusCode: 500,
+            body: JSON.stringify({ error: 'Kunde inte hämta meddelanden för användaren' }),
+            headers: {
+                'Access-Control-Allow-Origin': '*',
+                'Access-Control-Allow-Credentials': true,
             },
         };
     }
