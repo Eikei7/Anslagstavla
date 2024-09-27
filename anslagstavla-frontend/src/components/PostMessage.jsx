@@ -8,20 +8,19 @@ const PostMessage = ({ onPostSuccess }) => {
     const [username, setUsername] = useState('');
     const [text, setText] = useState('');
     const [error, setError] = useState('');
-    const [confirmation, setConfirmation] = useState(''); // Ny state-variabel för bekräftelse
-    const [charCount, setCharCount] = useState(0); // För att hålla koll på teckenräkningen
+    const [confirmation, setConfirmation] = useState('');
+    const [charCount, setCharCount] = useState(0);
 
     const postMessage = async () => {
         if (username.trim() === '' || text.trim() === '') return;
         try {
             const response = await axios.post(`${API_URL}`, { username, text });
-            const { id } = response.data; // Få det returnerade id från servern
+            const { id } = response.data;
 
             setUsername('');
             setText('');
-            setCharCount(0); // Nollställ teckenräknaren
+            setCharCount(0);
 
-            // Inkludera id i bekräftelsemeddelandet
             setConfirmation(`Meddelandet har publicerats! Ange detta ID om du behöver ändra ditt inlägg: ${id}`);
 
             if (onPostSuccess) onPostSuccess();
@@ -31,12 +30,11 @@ const PostMessage = ({ onPostSuccess }) => {
         }
     };
 
-    // Hantera textinput med begränsning och teckenräkning
     const handleTextChange = (e) => {
         const value = e.target.value;
-        if (value.length <= 75) { // Max 75 tecken
+        if (value.length <= 75) {
             setText(value);
-            setCharCount(value.length); // Uppdatera teckenräknare
+            setCharCount(value.length);
         }
     };
 
@@ -55,10 +53,10 @@ const PostMessage = ({ onPostSuccess }) => {
                 className='message-input'
                 placeholder="Skriv ditt meddelande här..." 
                 value={text}
-                onChange={handleTextChange} // Använd valideringsfunktionen
-                maxLength={75} // Begränsa till max 75 tecken
+                onChange={handleTextChange}
+                maxLength={75}
             />
-            <p style={{ color: 'white' }}>{charCount}/75 tecken</p> {/* Vit färg på teckenräknare */}
+            <p style={{ color: 'white' }}>{charCount}/75 tecken</p>
 
             <button onClick={postMessage} disabled={!username.trim() || !text.trim()}>
                 Publicera
