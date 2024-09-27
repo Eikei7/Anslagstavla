@@ -22,3 +22,9 @@ The site is responsive and adapts to mobile devices, so you can easily read and 
 ## Technical Information
 The website is built using **React** for the frontend, with a serverless backend hosted on **AWS**. The backend handles posts and edits through **API Gateway** and **Lambda** functions, which store and retrieve data from a **DynamoDB** database.
 Frontend files are hosted on **S3**, and the site is configured to handle dynamic routing using **React Router**.
+> [!IMPORTANT]
+Endpoints:
+> * GET - API_URL/dev/messages - View all messages
+> * POST - API_URL/dev/messages - Create message
+> * PUT - API_URL/dev/messages/{id} - Edit message by ID
+> * GET - API_URL/dev/messages/user/{username} - View messages by specific user
