@@ -22,10 +22,10 @@ const Anslagstavla = () => {
     const [error, setError] = useState('');
     const [editingMessageId, setEditingMessageId] = useState(null);
     const [currentMessageText, setCurrentMessageText] = useState('');
-    const [inputMessageId, setInputMessageId] = useState(''); // För inmatning av ID
-    const [updateError, setUpdateError] = useState(''); // För uppdateringsfel
-    const [sortOrder, setSortOrder] = useState('newest'); // Håller reda på sorteringsordning
-    const [filterUser, setFilterUser] = useState(''); // Håller reda på vald användare för filtrering
+    const [inputMessageId, setInputMessageId] = useState('');
+    const [updateError, setUpdateError] = useState('');
+    const [sortOrder, setSortOrder] = useState('newest');
+    const [filterUser, setFilterUser] = useState('');
 
     const fetchMessages = async () => {
         try {
@@ -33,7 +33,6 @@ const Anslagstavla = () => {
             const response = await axios.get(`${API_URL}`);
             let sortedMessages = response.data;
             
-            // Sortera efter valt sorteringsordning
             if (sortOrder === 'newest') {
                 sortedMessages = sortedMessages.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
             } else {
@@ -57,10 +56,10 @@ const Anslagstavla = () => {
         try {
             await axios.put(`${API_URL}/${id}`, { text: newText });
             fetchMessages();
-            setEditingMessageId(null); // Stäng formuläret efter uppdatering
-            setUpdateError(''); // Återställ eventuella felmeddelanden
+            setEditingMessageId(null);
+            setUpdateError('');
         } catch (err) {
-            setUpdateError('Kunde inte uppdatera meddelandet'); // Visar fel i modalen
+            setUpdateError('Kunde inte uppdatera meddelandet');
         }
     };
 
@@ -71,8 +70,8 @@ const Anslagstavla = () => {
 
     const closeUpdateForm = () => {
         setEditingMessageId(null);
-        setInputMessageId(''); // Återställ inputfältet
-        setUpdateError(''); // Återställ eventuella fel
+        setInputMessageId('');
+        setUpdateError('');
     };
 
     const handleSortToggle = () => {
@@ -87,7 +86,6 @@ const Anslagstavla = () => {
         fetchMessages();
     }, [sortOrder]);
 
-    // Filtrera meddelanden efter användarnamn om ett användarnamn är valt
     const filteredMessages = filterUser 
         ? messages.filter(message => message.username.toLowerCase().includes(filterUser.toLowerCase())) 
         : messages;
@@ -95,9 +93,8 @@ const Anslagstavla = () => {
     return (
         <div className="tavlan">
             <h1>Shui - Anslagstavlan</h1>
-            {error && <p style={{ color: 'red' }}>{error}</p>} {/* Felmeddelande för att hämta meddelanden */}
+            {error && <p style={{ color: 'red' }}>{error}</p>}
             <img src="noticeboard.jpeg" width="410" alt="Anslagstavla" />
-            {/* Sorterings- och filtreringsfunktioner */}
             <div>
                 <button onClick={handleSortToggle}>
                     Sortera efter: {sortOrder === 'newest' ? 'Nyast först' : 'Äldst först'}
@@ -121,12 +118,11 @@ const Anslagstavla = () => {
                             <div className="message">{text}</div>
                             <div className="username">{username}</div>
 
-                            {/* Visa uppdateringsformulär i en modal om det aktuella meddelandet redigeras */}
                             {editingMessageId === id && (
                                 <div className="modal-overlay">
                                     <div className="modal-content">
                                         <h2>Ändra meddelandet</h2>
-                                        {updateError && <p style={{ color: 'red' }}>{updateError}</p>} {/* Visar fel i modalen */}
+                                        {updateError && <p style={{ color: 'red' }}>{updateError}</p>}
                                         <input 
                                             type="text" 
                                             placeholder="Ange nytt meddelande"
@@ -137,7 +133,7 @@ const Anslagstavla = () => {
                                             type="text" 
                                             placeholder="Ange meddelandets ID"
                                             value={inputMessageId}
-                                            onChange={(e) => setInputMessageId(e.target.value)} // Spara inmatat ID
+                                            onChange={(e) => setInputMessageId(e.target.value)}
                                         />
                                         <button onClick={() => handleUpdate(id, currentMessageText)}>Spara</button>
                                         <button onClick={closeUpdateForm}>Avbryt</button>

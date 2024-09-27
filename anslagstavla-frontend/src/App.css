@@ -13,7 +13,6 @@ body {
   font-size: 20px;
 }
 
-
 .tavlan {
   max-width: 410px;
   margin: 0 auto;
@@ -21,13 +20,13 @@ body {
   padding: 20px;
   border: 1px solid #000000;
   border-radius: 8px;
-  background-color: #42213D;
+  background-color: #2a5059;
 }
 
 .tavlan h1 {
   text-align: center;
   font-size: 40px;
-  color: #ffffff;
+  color: #f4edd0;
 }
 
 .tavlan p {
@@ -40,7 +39,7 @@ body {
   width: 100%;
   padding: 10px;
   margin-bottom: 10px;
-  border: 1px solid #ddd;
+  border: 1px solid #f4edd0;
   border-radius: 4px;
   font-size: 22px;
   box-sizing: border-box;
@@ -59,15 +58,16 @@ body {
   padding: 10px; 
   font-size: 22px; 
   border-radius: 5px; 
-  border: 1px solid #ccc;
+  border: 1px solid #f4edd0;
   box-sizing: border-box;
   font-family: 'Fira Sans', sans-serif;
 }
 
 .tavlan button {
+  font-family: 'Fira Sans', sans-serif;
   width: 100%;
   padding: 10px;
-  background-color: #683257;
+  background-color: #3B717D;
   color: white;
   font-size: 16px;
   height: 50px;
@@ -78,24 +78,24 @@ body {
 }
 
 .tavlan button:disabled {
-  background-color: #aaa; /* Grå för inaktiv knapp */
+  background-color: #aaa;
   cursor: not-allowed;
 }
 
 .tavlan button:hover:enabled {
-  background-color: #BD4089; /* Mörkare blå vid hover */
+  background-color: #4E96A6;
 }
 
 ul {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); /* Responsivt rutnät */
-  grid-gap: 35px; /* Mellanrum mellan rutorna */
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  grid-gap: 35px;
   padding: 0;
-  list-style-type: none; /* Ta bort standardpunktlista */
+  list-style-type: none;
 }
 
 ul li {
-  background-color: white;
+  background-color: #f4edd0;
   padding: 15px;
   border-radius: 8px;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
@@ -113,105 +113,102 @@ ul li {
 ul li::after {
   content: '';
   position: absolute;
-  bottom: -15px; /* Position under pratbubblan */
-  left: 20px; /* Justera detta för att flytta pratbubblans spets */
+  bottom: -15px;
+  left: 20px;
   border-width: 15px 15px 0;
   border-style: solid;
-  border-color: #f1f1f1 transparent transparent transparent; /* Triangel med samma färg som pratbubblan */
+  border-color: #f4edd0 transparent transparent transparent;
 }
 
 ul li .date {
   font-size: 16px;
-  color: gray; /* Grå text för datum och tid */
+  color: gray;
   position: absolute;
-  top: 10px; /* Positionerar 10px från toppen */
-  left: 10px; /* Positionerar 10px från vänster */
+  top: 10px;
+  left: 10px;
   text-align: left;
 }
 
 ul li .message {
   font-size: 20px;
-  margin: auto 0; /* Placera meddelandet i mitten */
+  margin: auto 0;
 }
 
 ul li .username {
   font-size: 20px;
   position: absolute;
-  left: 20px; /* Positionerar 10px från vänster */
-  bottom: 20px; /* Positionerar 10px från botten */
-  font-weight: bold; /* Fetare stil för användarnamnet */
-  margin-top: auto; /* Placera namnet längst ned */
+  left: 20px;
+  bottom: 20px;
+  font-weight: bold;
+  margin-top: auto;
 }
 
 ul li button {
   padding: 5px 10px;
   background-color: #28a745;
-  color: white;
+  color: #f4edd0;
   border: none;
   border-radius: 4px;
+  font-family: 'Fira Sans', sans-serif;
   cursor: pointer;
   transition: background-color 0.3s ease;
-  align-self: flex-end; /* Placera knappen längst ned till höger */
-  width: auto; /* Se till att knappen inte tar upp hela bredden */
-  max-width: 180px; /* Sätter en maxbredd för knappen */
+  align-self: flex-end;
+  width: auto;
+  max-width: 180px;
 }
 
 ul li button:hover {
   background-color: #218838;
 }
 
-/* Styling för navigeringen och centrering */
 .nav-container {
-  position: fixed; /* Gör att navigeringen stannar på en fast position */
-  top: 0; /* Placera navigeringen längst upp */
-  left: 50%; /* Justera till vänster */
+  position: fixed;
+  top: 0;
+  left: 50%;
   transform: translateX(-50%);
-  display: flex; /* Flexbox för att arrangera länkarna horisontellt */
-  justify-content: center; /* Centrerar navigeringen horisontellt */
-  align-items: center; /* Centrerar länkarna vertikalt inom sin container */
-  gap: 20px; /* Utrymme mellan navigeringslänkarna */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
   padding: 10px;
   max-width: 420px;
-  background-color: #9b6192;
+  background-color: #3B717D;
   border-radius: 5px;
-  margin-top: 20px; /* Skapa lite utrymme ovanför navigeringen */
+  margin-top: 20px;
   z-index: 1000;
 }
 
-/* Styling för varje länk */
 .nav-item {
-  font-size: 14px;
+  font-size: 16px;
 }
 
-/* Styling för länkar */
 .nav-item a {
   text-decoration: none;
   text-transform: uppercase;
-  color: #ffffff; /* Länkfärg */
+  color: #f4edd0;
   font-weight: bold;
 }
 
 .nav-item a:hover {
-  color: #0056b3; /* Länkfärg vid hovring */
+  color: #0056b3;
   text-decoration: underline;
 }
-/* Modalens overlay som täcker hela sidan */
+
 .modal-overlay {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.5); /* Mörk bakgrund för att fokusera på modalen */
+  background-color: rgba(0, 0, 0, 0.5);
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 1000; /* Se till att modalen ligger över allt annat innehåll */
+  z-index: 1000;
 }
 
-/* Modalens innehåll */
 .modal-content {
-  background-color: white;
+  background-color: #f4edd0;
   padding: 20px;
   border-radius: 10px;
   width: 300px;
@@ -232,8 +229,8 @@ ul li button:hover {
   width: 100px;
   height: 40px;
   margin-right: 10px;
-  background-color: #683257;
-  color: white;
+  background-color: #3B717D;
+  color: #ffffff;
   border: none;
   border-radius: 5px;
   cursor: pointer;
