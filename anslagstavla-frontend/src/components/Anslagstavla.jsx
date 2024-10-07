@@ -6,6 +6,10 @@ const API_URL = 'https://pam9y14ofd.execute-api.eu-north-1.amazonaws.com/dev/mes
 const formatDate = (dateString) => {
     const date = new Date(dateString);
 
+    if (isNaN(date)) {
+        return "Invalid date"; // Om datumet är felaktigt
+    }
+
     return date.toLocaleString('sv-SE', {
         timeZone: 'Europe/Stockholm', // Svensk tidzon (CET/CEST)
         year: 'numeric',

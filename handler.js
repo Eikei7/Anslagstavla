@@ -6,18 +6,7 @@ module.exports.createMessage = async (event) => {
     const { username, text } = JSON.parse(event.body);
     const id = Date.now().toString();
 
-    const formatDate = (date) => {
-      return date.toLocaleString('sv-SE', {
-        timeZone: 'Europe/Stockholm', // Svensk tidzon (CET/CEST)
-        year: 'numeric',
-        month: 'short',
-        day: '2-digit',
-        hour: '2-digit',
-        minute: '2-digit',
-      });
-    };
-
-    const createdAt = formatDate(new Date());
+    const createdAt = new Date().toISOString();
 
     const params = {
         TableName: tableName,
