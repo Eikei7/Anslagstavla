@@ -1,14 +1,10 @@
 {
   "devDependencies": {
     "serverless-webpack": "^5.14.2",
-    "webpack-node-externals": "^3.0.0",
-    "postcss": ">=8.4.31",
-    "cookie": ">=0.7.0"
+    "webpack-node-externals": "^3.0.0"
   },
   "dependencies": {
     "aws-sdk": "^2.1691.0",
-    "serverless-s3-sync": "^3.3.0",
-    "postcss": ">=8.4.31",
-    "cookie": ">=0.7.0"
+    "serverless-s3-sync": "^3.3.0"
   }
 }
