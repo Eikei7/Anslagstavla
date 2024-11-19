@@ -5,6 +5,7 @@
   },
   "dependencies": {
     "aws-sdk": "^2.1691.0",
+    "nth-check": "^2.1.1",
     "serverless-s3-sync": "^3.3.0"
   }
 }
