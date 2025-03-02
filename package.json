@@ -1,11 +1,5 @@
 {
-  "devDependencies": {
-    "serverless-webpack": "^5.15.0",
-    "webpack-node-externals": "^3.0.0"
-  },
   "dependencies": {
-    "aws-sdk": "^2.1691.0",
-    "nth-check": "^2.1.1",
-    "serverless-s3-sync": "^3.3.0"
+    "aws-sdk": "^2.1692.0"
   }
 }
