@@ -1,104 +1,210 @@
-@import url(https://fonts.googleapis.com/css?family=Fira+Sans:100,200,300,400,regular,italic,500,600,700,800,900);
+@import url('https://fonts.googleapis.com/css?family=Fira+Sans:100,200,300,400,regular,italic,500,600,700,800,900');
 
+:root {
+  /* Grundläggande färgschema */
+  --primary-color: #2a5059;
+  --primary-light: #3B717D;
+  --primary-dark: #1e3a40;
+  --primary-hover: #4E96A6;
+  --accent-color: #f4edd0;
+  --text-light: #ffffff;
+  --text-dark: #333333;
+  --error-color: #d32f2f;
+  --success-color: #28a745;
+  --success-hover: #218838;
+  --disabled-color: #aaaaaa;
+  
+  /* Skuggor och effekter */
+  --box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  --box-shadow-heavy: 0 5px 15px rgba(0, 0, 0, 0.3);
+  
+  /* Avrundade hörn */
+  --border-radius-sm: 4px;
+  --border-radius-md: 8px;
+  --border-radius-lg: 10px;
+  
+  /* Avstånd */
+  --spacing-xs: 5px;
+  --spacing-sm: 10px;
+  --spacing-md: 15px;
+  --spacing-lg: 20px;
+  --spacing-xl: 35px;
+}
+
+/* Grundläggande layoutstil */
 body {
   display: flex;
-  justify-content: center; 
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
   min-height: 100vh;
   margin: 0;
+  font-family: 'Fira Sans', sans-serif;
+  color: var(--text-dark);
 }
 
-.confirmation-message {
-  color: #ffffff;
-  font-weight: bold;
-  font-size: 20px;
-}
-
+/* Grundläggande layout för anslagstavlan */
 .tavlan {
   max-width: 410px;
+  width: 100%;
   margin: 0 auto;
   margin-top: 70px;
-  padding: 20px;
-  border: 1px solid #000000;
-  border-radius: 8px;
-  background-color: #2a5059;
+  padding: var(--spacing-lg);
+  border: 1px solid var(--primary-dark);
+  border-radius: var(--border-radius-md);
+  background-color: var(--primary-color);
+  box-shadow: var(--box-shadow);
+  box-sizing: border-box;
 }
 
+/* Rubriker */
 .tavlan h1 {
   text-align: center;
   font-size: 40px;
-  color: #f4edd0;
+  color: var(--accent-color);
+  margin-top: 0;
 }
 
+.tavlan h2 {
+  text-align: center;
+  font-size: 28px;
+  color: var(--accent-color);
+  margin-top: 0;
+}
+
+/* Generella textkomponenter */
 .tavlan p {
   text-align: center;
-  margin-bottom: 20px;
+  margin-bottom: var(--spacing-lg);
   font-size: 16px;
+  color: var(--text-light);
+}
+
+/* Form och input-fält */
+.form-group {
+  margin-bottom: var(--spacing-lg);
+}
+
+.tavlan label {
+  display: block;
+  color: var(--accent-color);
+  margin-bottom: var(--spacing-xs);
+  font-weight: 500;
 }
 
 .tavlan input {
   width: 100%;
-  padding: 10px;
-  margin-bottom: 10px;
-  border: 1px solid #f4edd0;
-  border-radius: 4px;
-  font-size: 22px;
+  padding: var(--spacing-sm);
+  margin-bottom: var(--spacing-sm);
+  border: 1px solid var(--accent-color);
+  border-radius: var(--border-radius-sm);
+  font-size: 18px;
   box-sizing: border-box;
   font-family: 'Fira Sans', sans-serif;
+  background-color: var(--text-light);
 }
 
-.tavlan img {
-  width: 100%;
-  border-radius: 8px;
-  margin-bottom: 20px;
-}
-
+/* Textarea för meddelanden */
 .message-input {
   width: 100%;
-  height: 200px;
-  padding: 10px; 
-  font-size: 22px; 
-  border-radius: 5px; 
-  border: 1px solid #f4edd0;
+  height: 150px;
+  padding: var(--spacing-sm);
+  font-size: 18px;
+  border-radius: var(--border-radius-sm);
+  border: 1px solid var(--accent-color);
   box-sizing: border-box;
   font-family: 'Fira Sans', sans-serif;
+  resize: vertical;
+  background-color: var(--text-light);
 }
 
+/* Teckentäljare */
+.char-counter {
+  text-align: right;
+  color: var(--text-light);
+  font-size: 14px;
+  margin-top: var(--spacing-xs);
+}
+
+.char-counter .near-limit {
+  color: #ffcc00;
+  font-weight: bold;
+}
+
+/* Bild */
+.tavlan img {
+  width: 100%;
+  border-radius: var(--border-radius-md);
+  margin-bottom: var(--spacing-lg);
+}
+
+/* Knappar */
 .tavlan button {
   font-family: 'Fira Sans', sans-serif;
   width: 100%;
-  padding: 10px;
-  background-color: #3B717D;
-  color: white;
+  padding: var(--spacing-sm);
+  background-color: var(--primary-light);
+  color: var(--text-light);
   font-size: 16px;
   height: 50px;
   border: none;
-  border-radius: 4px;
+  border-radius: var(--border-radius-sm);
   cursor: pointer;
   transition: background-color 0.3s ease;
 }
 
 .tavlan button:disabled {
-  background-color: #aaa;
+  background-color: var(--disabled-color);
   cursor: not-allowed;
 }
 
-.tavlan button:hover:enabled {
-  background-color: #4E96A6;
+.tavlan button:hover:not(:disabled) {
+  background-color: var(--primary-hover);
 }
 
-ul {
+/* Meddelande- och systemstatusestilar */
+.error-message {
+  background-color: var(--error-color);
+  color: var(--text-light);
+  padding: var(--spacing-sm);
+  border-radius: var(--border-radius-sm);
+  margin-bottom: var(--spacing-lg);
+  text-align: center;
+  font-weight: 500;
+}
+
+.confirmation-message {
+  background-color: var(--success-color);
+  color: var(--text-light);
+  padding: var(--spacing-sm);
+  border-radius: var(--border-radius-sm);
+  margin-bottom: var(--spacing-lg);
+  text-align: center;
+  font-weight: 500;
+}
+
+.loading-message, .empty-message {
+  color: var(--text-light);
+  text-align: center;
+  font-size: 18px;
+  padding: var(--spacing-lg);
+}
+
+/* Kortlistning */
+.message-list {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  grid-gap: 35px;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  grid-gap: var(--spacing-xl);
   padding: 0;
   list-style-type: none;
+  margin-top: var(--spacing-lg);
 }
 
-ul li {
-  background-color: #f4edd0;
-  padding: 15px;
-  border-radius: 8px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+.message-item {
+  background-color: var(--accent-color);
+  padding: var(--spacing-md);
+  border-radius: var(--border-radius-md);
+  box-shadow: var(--box-shadow);
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -106,61 +212,91 @@ ul li {
   text-align: center;
   word-wrap: break-word;
   overflow-wrap: break-word;
-  height: 200px;
+  min-height: 200px;
+  height: auto;
   position: relative;
 }
 
-ul li::after {
+.message-item::after {
   content: '';
   position: absolute;
   bottom: -15px;
   left: 20px;
   border-width: 15px 15px 0;
   border-style: solid;
-  border-color: #f4edd0 transparent transparent transparent;
+  border-color: var(--accent-color) transparent transparent transparent;
 }
 
-ul li .date {
-  font-size: 16px;
-  color: gray;
+.message-item .date {
+  font-size: 14px;
+  color: var(--text-dark);
+  opacity: 0.7;
   position: absolute;
   top: 10px;
   left: 10px;
   text-align: left;
 }
 
-ul li .message {
-  font-size: 20px;
+.message-item .message {
+  font-size: 18px;
   margin: auto 0;
+  padding: var(--spacing-md) 0;
+  color: var(--text-dark);
 }
 
-ul li .username {
-  font-size: 20px;
+.message-item .username {
+  font-size: 16px;
   position: absolute;
-  left: 20px;
-  bottom: 20px;
+  left: 15px;
+  bottom: 15px;
   font-weight: bold;
   margin-top: auto;
+  color: var(--text-dark);
 }
 
-ul li button {
-  padding: 5px 10px;
-  background-color: #28a745;
-  color: #f4edd0;
+.message-item .edit-button {
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+  padding: var(--spacing-xs) var(--spacing-sm);
+  background-color: var(--success-color);
+  color: var(--text-light);
   border: none;
-  border-radius: 4px;
+  border-radius: var(--border-radius-sm);
   font-family: 'Fira Sans', sans-serif;
   cursor: pointer;
   transition: background-color 0.3s ease;
-  align-self: flex-end;
+  font-size: 12px;
+  height: auto;
   width: auto;
-  max-width: 180px;
+  max-width: 100px;
 }
 
-ul li button:hover {
-  background-color: #218838;
+.message-item .edit-button:hover {
+  background-color: var(--success-hover);
 }
 
+/* Kontroller för sortering och filtrering */
+.controls {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--spacing-lg);
+  gap: var(--spacing-sm);
+}
+
+.sort-button, .refresh-button {
+  flex: 1;
+  min-width: 120px;
+}
+
+.filter-input {
+  flex: 2;
+  min-width: 150px;
+}
+
+/* Navigering */
 .nav-container {
   position: fixed;
   top: 0;
@@ -169,13 +305,15 @@ ul li button:hover {
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 20px;
-  padding: 10px;
+  gap: var(--spacing-lg);
+  padding: var(--spacing-sm);
   max-width: 420px;
-  background-color: #3B717D;
-  border-radius: 5px;
-  margin-top: 20px;
+  width: 100%;
+  background-color: var(--primary-light);
+  border-radius: var(--border-radius-sm);
+  margin-top: var(--spacing-lg);
   z-index: 1000;
+  box-shadow: var(--box-shadow);
 }
 
 .nav-item {
@@ -185,22 +323,24 @@ ul li button:hover {
 .nav-item a {
   text-decoration: none;
   text-transform: uppercase;
-  color: #f4edd0;
+  color: var(--accent-color);
   font-weight: bold;
+  transition: color 0.3s ease;
 }
 
 .nav-item a:hover {
-  color: #0056b3;
+  color: #ffffff;
   text-decoration: underline;
 }
 
+/* Modal för redigering */
 .modal-overlay {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: rgba(0, 0, 0, 0.6);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -208,34 +348,101 @@ ul li button:hover {
 }
 
 .modal-content {
-  background-color: #f4edd0;
-  padding: 20px;
-  border-radius: 10px;
-  width: 300px;
+  background-color: var(--accent-color);
+  padding: var(--spacing-lg);
+  border-radius: var(--border-radius-lg);
+  width: 90%;
+  max-width: 350px;
   text-align: center;
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+  box-shadow: var(--box-shadow-heavy);
 }
 
-.modal-content input {
+.modal-content h2 {
+  color: var(--primary-color);
+  margin-top: 0;
+}
+
+.modal-content input, 
+.modal-content textarea {
   width: 100%;
-  margin-bottom: 10px;
-  padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
+  margin-bottom: var(--spacing-sm);
+  padding: var(--spacing-sm);
+  border: 1px solid var(--primary-light);
+  border-radius: var(--border-radius-sm);
+  font-family: 'Fira Sans', sans-serif;
 }
 
-.modal-content button {
-  padding: 10px;
-  width: 100px;
-  height: 40px;
-  margin-right: 10px;
-  background-color: #3B717D;
-  color: #ffffff;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
+.modal-content .edit-textarea {
+  min-height: 100px;
+  resize: vertical;
 }
 
-.modal-content button:hover {
-  background-color: #0056b3;
+.modal-content .id-input {
+  font-family: monospace;
+  letter-spacing: 1px;
+}
+
+.modal-buttons {
+  display: flex;
+  justify-content: center;
+  gap: var(--spacing-sm);
+  margin-top: var(--spacing-lg);
+}
+
+.modal-content .save-button {
+  background-color: var(--success-color);
+  width: 120px;
+}
+
+.modal-content .save-button:hover:not(:disabled) {
+  background-color: var(--success-hover);
+}
+
+.modal-content .cancel-button {
+  background-color: #6c757d;
+  width: 120px;
+}
+
+.modal-content .cancel-button:hover {
+  background-color: #5a6268;
+}
+
+/* Tangentbordsgenvägar */
+.keyboard-shortcut {
+  text-align: center;
+  color: var(--accent-color);
+  font-size: 14px;
+  margin-top: var(--spacing-sm);
+  opacity: 0.8;
+}
+
+/* Responsivitet */
+@media (max-width: 480px) {
+  .tavlan {
+    margin-top: 60px;
+    padding: var(--spacing-sm);
+    border-radius: var(--border-radius-sm);
+  }
+  
+  .message-list {
+    grid-template-columns: 1fr;
+  }
+  
+  .controls {
+    flex-direction: column;
+  }
+  
+  .filter-input, .sort-button, .refresh-button {
+    width: 100%;
+  }
+  
+  .modal-content {
+    width: 95%;
+    padding: var(--spacing-sm);
+  }
+  
+  .nav-container {
+    flex-wrap: wrap;
+    padding: var(--spacing-xs);
+  }
 }
