@@ -37,5 +37,9 @@
   "devDependencies": {
     "resolve-url-loader": "^5.0.0",
     "react-scripts": "^5.0.1"
+  },
+  "overrides": {
+    "postcss": "^8.4.31",
+    "nth-check": "^2.1.1"
   }
 }
