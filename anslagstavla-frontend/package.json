@@ -8,7 +8,7 @@
     "eslint-config-react-app": "^7.0.1",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
-    "react-router-dom": "^7.5.3"
+    "react-router-dom": "^7.6.0"
   },
   "scripts": {
     "start": "react-scripts start",
@@ -35,7 +35,6 @@
     ]
   },
   "devDependencies": {
-    "resolve-url-loader": "^5.0.0",
     "react-scripts": "^5.0.1"
   },
   "overrides": {
