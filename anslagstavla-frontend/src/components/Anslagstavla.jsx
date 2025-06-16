@@ -158,9 +158,8 @@ const Anslagstavla = () => {
             <h1>Anslagstavlan</h1>
             
             {error && <div className="error-message" role="alert">{error}</div>}
-            
             <div className="header-image">
-                <img src="/img/noticeboard.jpeg" width="410" alt="Anslagstavla" />
+                <img src="/noticeboard.jpeg" width="410" alt="Anslagstavla" />
             </div>
             
             <div className="controls">
