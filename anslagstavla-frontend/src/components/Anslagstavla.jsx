@@ -1,5 +1,6 @@
-import React, { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import axios from 'axios';
+
 
 const API_URL = 'https://pam9y14ofd.execute-api.eu-north-1.amazonaws.com/dev/messages';
 
@@ -159,7 +160,7 @@ const Anslagstavla = () => {
             
             {error && <div className="error-message" role="alert">{error}</div>}
             <div className="header-image">
-                <img src="/noticeboard.jpeg" width="410" alt="Anslagstavla" />
+                <img src="/img/noticeboard.jpeg" width="410" alt="Anslagstavla" />
             </div>
             
             <div className="controls">
