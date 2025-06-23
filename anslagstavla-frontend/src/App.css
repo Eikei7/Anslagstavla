@@ -416,6 +416,60 @@ body {
   opacity: 0.8;
 }
 
+.updated-indicator {
+    font-style: italic;
+    opacity: 0.7;
+}
+
+.message-count {
+    text-align: center;
+    color: var(--text-light);
+    margin-bottom: var(--spacing-md);
+    font-size: 14px;
+}
+
+.filter-container {
+    position: relative;
+    flex: 2;
+    min-width: 150px;
+}
+
+.clear-filter-button {
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--text-dark);
+    font-size: 16px;
+    padding: 2px;
+    width: auto;
+    height: auto;
+}
+
+.retry-button {
+    margin-left: var(--spacing-sm);
+    padding: var(--spacing-xs);
+    background-color: var(--primary-hover);
+    font-size: 12px;
+    width: auto;
+    height: auto;
+}
+
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
 /* Responsivitet */
 @media (max-width: 480px) {
   .tavlan {

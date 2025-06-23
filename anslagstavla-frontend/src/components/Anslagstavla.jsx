@@ -1,8 +1,35 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import axios from 'axios';
 
+// Konfigurera API
+const API_CONFIG = {
+    baseURL: process.env.REACT_APP_API_URL || 'https://pam9y14ofd.execute-api.eu-north-1.amazonaws.com/dev/messages',
+    timeout: 10000
+};
 
-const API_URL = 'https://pam9y14ofd.execute-api.eu-north-1.amazonaws.com/dev/messages';
+// Konfigurera axios med timeout och interceptors
+const api = axios.create({
+    baseURL: API_CONFIG.baseURL,
+    timeout: API_CONFIG.timeout
+});
+
+// Response interceptor för bättre felhantering
+api.interceptors.response.use(
+    response => response,
+    error => {
+        // Hantera specifika HTTP-statuskoder
+        if (error.response?.status === 429) {
+            throw new Error('För många förfrågningar. Försök igen om en stund.');
+        }
+        if (error.response?.status >= 500) {
+            throw new Error('Serverfel. Försök igen senare.');
+        }
+        if (error.code === 'ECONNABORTED') {
+            throw new Error('Anslutningen tog för lång tid. Kontrollera din internetanslutning.');
+        }
+        throw error;
+    }
+);
 
 const formatDate = (dateString) => {
     try {
@@ -26,6 +53,116 @@ const formatDate = (dateString) => {
     }
 };
 
+// Memoized MessageItem komponent för bättre prestanda
+const MessageItem = ({ message, onEdit, editingMessageId, currentMessageText, inputMessageId, updateError, onUpdate, onCloseEdit, onInputChange, onIdChange }) => {
+    const { id, username, text, createdAt, updatedAt } = message;
+    
+    const handleKeyDown = useCallback((e) => {
+        if (e.key === 'Escape') {
+            onCloseEdit();
+        } else if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
+            onUpdate(id, currentMessageText);
+        }
+    }, [id, currentMessageText, onUpdate, onCloseEdit]);
+
+    return (
+        <li className="message-item">
+            <div className="date" title={new Date(createdAt).toISOString()}>
+                {formatDate(updatedAt || createdAt)}
+                {updatedAt && <span className="updated-indicator"> (redigerad)</span>}
+            </div>
+            <div className="message">{text}</div>
+            <div className="username">{username}</div>
+
+            <button 
+                onClick={() => onEdit(id, text)}
+                className="edit-button"
+                aria-label={`Ändra meddelande från ${username}`}
+            >
+                Ändra meddelandet
+            </button>
+
+            {editingMessageId === id && (
+                <div 
+                    className="modal-overlay" 
+                    onClick={(e) => {
+                        if (e.target.className === 'modal-overlay') {
+                            onCloseEdit();
+                        }
+                    }}
+                >
+                    <div 
+                        className="modal-content"
+                        onKeyDown={handleKeyDown}
+                    >
+                        <h2>Ändra meddelandet</h2>
+                        
+                        {updateError && (
+                            <div className="error-message" role="alert">
+                                {updateError}
+                            </div>
+                        )}
+                        
+                        <div className="form-group">
+                            <label htmlFor="edit-message">Nytt meddelande</label>
+                            <textarea 
+                                id="edit-message"
+                                placeholder="Ange nytt meddelande"
+                                value={currentMessageText}
+                                onChange={onInputChange}
+                                className="edit-textarea"
+                                autoFocus
+                                maxLength={75}
+                                aria-required="true"
+                            />
+                            <div className="char-counter" aria-live="polite">
+                                <span className={currentMessageText.length >= 68 ? "near-limit" : ""}>
+                                    {currentMessageText.length}/75 tecken
+                                </span>
+                            </div>
+                        </div>
+                        
+                        <div className="form-group">
+                            <label htmlFor="message-id">Meddelande-ID för bekräftelse</label>
+                            <input 
+                                id="message-id"
+                                type="text" 
+                                placeholder="Ange meddelandets ID för bekräftelse"
+                                value={inputMessageId}
+                                onChange={onIdChange}
+                                className="id-input"
+                                aria-required="true"
+                            />
+                        </div>
+                        
+                        <div className="modal-buttons">
+                            <button 
+                                onClick={() => onUpdate(id, currentMessageText)}
+                                className="save-button"
+                                disabled={!currentMessageText.trim() || currentMessageText.length > 75}
+                            >
+                                Spara
+                            </button>
+                            
+                            <button 
+                                onClick={onCloseEdit}
+                                className="cancel-button"
+                            >
+                                Avbryt
+                            </button>
+                        </div>
+                        
+                        <p className="keyboard-shortcut">
+                            Tips: Tryck Escape för att avbryta, Enter för att spara
+                        </p>
+                    </div>
+                </div>
+            )}
+        </li>
+    );
+};
+
 const Anslagstavla = () => {
     const [messages, setMessages] = useState([]);
     const [loading, setLoading] = useState(false);
@@ -37,11 +174,19 @@ const Anslagstavla = () => {
     const [sortOrder, setSortOrder] = useState('newest');
     const [filterUser, setFilterUser] = useState('');
     const [originalMessages, setOriginalMessages] = useState([]);
+    const [retryCount, setRetryCount] = useState(0);
     
+    // Cache för meddelanden
+    const cacheRef = useRef({
+        messages: null,
+        timestamp: null,
+        duration: 5 * 60 * 1000 // 5 minuter
+    });
+
     // Använd useRef för att bryta cirkulära beroenden
     const closeUpdateFormRef = useRef(() => {});
 
-    // Stäng formulär för uppdatering - definiera först funktionen utan beroenden
+    // Stäng formulär för uppdatering
     const closeUpdateForm = useCallback(() => {
         setEditingMessageId(null);
         setInputMessageId('');
@@ -54,15 +199,40 @@ const Anslagstavla = () => {
         closeUpdateFormRef.current = closeUpdateForm;
     }, [closeUpdateForm]);
 
-    // Sortera och filtrera meddelanden - nu med useCallback
+    // Cache helpers
+    const getCachedMessages = useCallback(() => {
+        const { messages, timestamp, duration } = cacheRef.current;
+        if (messages && timestamp && (Date.now() - timestamp < duration)) {
+            return messages;
+        }
+        return null;
+    }, []);
+
+    const setCachedMessages = useCallback((messages) => {
+        cacheRef.current = {
+            messages,
+            timestamp: Date.now(),
+            duration: 5 * 60 * 1000
+        };
+    }, []);
+
+    // Sortera och filtrera meddelanden
     const sortAndFilterMessages = useCallback((messagesToProcess = originalMessages) => {
         let sorted = [...messagesToProcess];
         
-        // Sortera efter datum
+        // Sortera efter datum (använd updatedAt om det finns, annars createdAt)
         if (sortOrder === 'newest') {
-            sorted = sorted.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+            sorted = sorted.sort((a, b) => {
+                const dateA = new Date(a.updatedAt || a.createdAt);
+                const dateB = new Date(b.updatedAt || b.createdAt);
+                return dateB - dateA;
+            });
         } else {
-            sorted = sorted.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+            sorted = sorted.sort((a, b) => {
+                const dateA = new Date(a.updatedAt || a.createdAt);
+                const dateB = new Date(b.updatedAt || b.createdAt);
+                return dateA - dateB;
+            });
         }
         
         // Filtrera efter användarnamn
@@ -75,26 +245,71 @@ const Anslagstavla = () => {
         setMessages(sorted);
     }, [sortOrder, filterUser, originalMessages]);
 
-    // Hämta meddelanden - nu med useCallback
-    const fetchMessages = useCallback(async () => {
+    // Hämta meddelanden med retry-logik
+    const fetchMessages = useCallback(async (useCache = true) => {
+        // Kontrollera cache först
+        if (useCache) {
+            const cached = getCachedMessages();
+            if (cached) {
+                setOriginalMessages(cached);
+                sortAndFilterMessages(cached);
+                return;
+            }
+        }
+
         try {
             setLoading(true);
             setError('');
-            const response = await axios.get(API_URL);
-            setOriginalMessages(response.data);
-            sortAndFilterMessages(response.data);
-            setLoading(false);
+            setRetryCount(0);
+            
+            const response = await api.get('');
+            const messagesData = response.data;
+            
+            setOriginalMessages(messagesData);
+            setCachedMessages(messagesData);
+            sortAndFilterMessages(messagesData);
+            
         } catch (err) {
-            const errorMessage = err.response?.data?.message || 'Kunde inte hämta meddelanden';
-            setError(`Fel: ${errorMessage}`);
+            console.error('Fel vid hämtning av meddelanden:', err);
+            
+            let errorMessage = 'Kunde inte hämta meddelanden';
+            if (err.message) {
+                errorMessage = err.message;
+            } else if (err.response?.data?.error) {
+                errorMessage = err.response.data.error;
+            }
+            
+            setError(errorMessage);
+            
+            // Använd cache som fallback vid fel
+            const cached = getCachedMessages();
+            if (cached) {
+                setOriginalMessages(cached);
+                sortAndFilterMessages(cached);
+                setError(`${errorMessage} (visar cachade data)`);
+            }
+        } finally {
             setLoading(false);
         }
-    }, [sortAndFilterMessages]); // sortAndFilterMessages är ett beroende här
+    }, [sortAndFilterMessages, getCachedMessages, setCachedMessages]);
 
-    // Uppdatera ett meddelande - använd closeUpdateFormRef istället för closeUpdateForm
+    // Retry-funktion
+    const retryFetch = useCallback(async () => {
+        if (retryCount < 3) {
+            setRetryCount(prev => prev + 1);
+            await fetchMessages(false); // Skippa cache vid retry
+        }
+    }, [retryCount, fetchMessages]);
+
+    // Uppdatera ett meddelande
     const handleUpdate = useCallback(async (id, newText) => {
         if (!newText.trim()) {
             setUpdateError('Meddelandet kan inte vara tomt');
+            return;
+        }
+        
+        if (newText.length > 75) {
+            setUpdateError('Meddelandet får vara max 75 tecken');
             return;
         }
         
@@ -105,13 +320,33 @@ const Anslagstavla = () => {
 
         try {
             setUpdateError('');
-            await axios.put(`${API_URL}/${id}`, { text: newText });
-            await fetchMessages();
-            // Använd ref istället för direkt funktion för att bryta cirkeln
+            await api.put(`/${id}`, { text: newText });
+            
+            // Uppdatera lokalt state direkt för bättre UX
+            setOriginalMessages(prev => 
+                prev.map(msg => 
+                    msg.id === id 
+                        ? { ...msg, text: newText, updatedAt: new Date().toISOString() }
+                        : msg
+                )
+            );
+            
+            // Rensa cache och hämta uppdaterade data
+            cacheRef.current.messages = null;
+            await fetchMessages(false);
+            
             closeUpdateFormRef.current();
         } catch (err) {
-            const errorMessage = err.response?.data?.message || 'Kunde inte uppdatera meddelandet';
-            setUpdateError(`Fel: ${errorMessage}`);
+            console.error('Fel vid uppdatering:', err);
+            
+            let errorMessage = 'Kunde inte uppdatera meddelandet';
+            if (err.message) {
+                errorMessage = err.message;
+            } else if (err.response?.data?.error) {
+                errorMessage = err.response.data.error;
+            }
+            
+            setUpdateError(errorMessage);
         }
     }, [inputMessageId, fetchMessages]);
 
@@ -133,147 +368,137 @@ const Anslagstavla = () => {
         setFilterUser(e.target.value);
     }, []);
 
+    // Rensa filter
+    const clearFilter = useCallback(() => {
+        setFilterUser('');
+    }, []);
+
     // Hämta meddelanden vid komponentladdning
     useEffect(() => {
         fetchMessages();
     }, []); // eslint-disable-line react-hooks/exhaustive-deps
-    // Vi använder eslint-disable på denna rad eftersom fetchMessages bara behöver köras vid montering
 
-    // Uppdatera sortering och filtrering när någon av dessa parametrar ändras
+    // Uppdatera sortering och filtrering när parametrar ändras
     useEffect(() => {
         sortAndFilterMessages();
     }, [sortOrder, filterUser, sortAndFilterMessages]);
 
-    // Hantera tangentbordshändelser för modal
-    const handleKeyDown = useCallback((e, id, text) => {
-        if (e.key === 'Escape') {
-            closeUpdateFormRef.current();
-        } else if (e.key === 'Enter' && !e.shiftKey) {
-            e.preventDefault();
-            handleUpdate(id, text);
-        }
-    }, [handleUpdate]);
+    // Auto-refresh var 30:e sekund
+    useEffect(() => {
+        const interval = setInterval(() => {
+            fetchMessages();
+        }, 30000);
+
+        return () => clearInterval(interval);
+    }, [fetchMessages]);
+
+    // Event handlers för modal
+    const handleMessageTextChange = useCallback((e) => {
+        setCurrentMessageText(e.target.value);
+    }, []);
+
+    const handleIdChange = useCallback((e) => {
+        setInputMessageId(e.target.value);
+    }, []);
 
     return (
-        <div className="tavlan">
-            <h1>Anslagstavlan</h1>
+        <main className="tavlan" role="main">
+            <h1 id="main-heading">Anslagstavlan</h1>
             
-            {error && <div className="error-message" role="alert">{error}</div>}
+            {error && (
+                <div className="error-message" role="alert">
+                    {error}
+                    {retryCount < 3 && (
+                        <button onClick={retryFetch} className="retry-button">
+                            Försök igen ({retryCount + 1}/3)
+                        </button>
+                    )}
+                </div>
+            )}
+            
             <div className="header-image">
                 <img src="/img/noticeboard.jpeg" width="410" alt="Anslagstavla" />
             </div>
             
-            <div className="controls">
+            <section className="controls" aria-label="Kontroller för meddelanden">
                 <button 
                     onClick={handleSortToggle}
                     className="sort-button"
-                    aria-label={`Sortera efter: ${sortOrder === 'newest' ? 'Nyast först' : 'Äldst först'}`}
+                    aria-label={`Nuvarande sortering: ${sortOrder === 'newest' ? 'Nyast först' : 'Äldst först'}. Klicka för att ändra`}
                 >
-                    Sortera efter: {sortOrder === 'newest' ? 'Nyast först' : 'Äldst först'}
+                    Sortera: {sortOrder === 'newest' ? 'Nyast först' : 'Äldst först'}
                 </button>
 
-                <input 
-                    type="text"
-                    className="filter-input"
-                    placeholder="Filtrera efter användarnamn"
-                    value={filterUser}
-                    onChange={handleFilterChange}
-                    aria-label="Filtrera efter användarnamn"
-                />
+                <div className="filter-container">
+                    <input 
+                        type="text"
+                        className="filter-input"
+                        placeholder="Filtrera efter användarnamn"
+                        value={filterUser}
+                        onChange={handleFilterChange}
+                        aria-label="Filtrera efter användarnamn"
+                    />
+                    {filterUser && (
+                        <button 
+                            onClick={clearFilter}
+                            className="clear-filter-button"
+                            aria-label="Rensa filter"
+                            title="Rensa filter"
+                        >
+                            ✕
+                        </button>
+                    )}
+                </div>
                 
                 <button 
-                    onClick={fetchMessages}
+                    onClick={() => fetchMessages(false)}
                     className="refresh-button"
                     disabled={loading}
                     aria-label="Uppdatera meddelanden"
                 >
                     {loading ? 'Uppdaterar...' : 'Uppdatera'}
                 </button>
-            </div>
+            </section>
 
-            {loading ? (
-                <p className="loading-message">Laddar meddelanden...</p>
-            ) : messages.length > 0 ? (
-                <ul className="message-list">
-                    {messages.map(({ id, username, text, createdAt }) => (
-                        <li key={id} className="message-item">
-                            <div className="date" title={new Date(createdAt).toISOString()}>
-                                {formatDate(createdAt)}
-                            </div>
-                            <div className="message">{text}</div>
-                            <div className="username">{username}</div>
-
-                            <button 
-                                onClick={() => openUpdateForm(id, text)}
-                                className="edit-button"
-                                aria-label={`Ändra meddelande från ${username}`}
-                            >
-                                Ändra meddelandet
-                            </button>
-
-                            {editingMessageId === id && (
-                                <div 
-                                    className="modal-overlay" 
-                                    onClick={(e) => {
-                                        if (e.target.className === 'modal-overlay') {
-                                            closeUpdateForm();
-                                        }
-                                    }}
-                                >
-                                    <div 
-                                        className="modal-content"
-                                        onKeyDown={(e) => handleKeyDown(e, id, currentMessageText)}
-                                    >
-                                        <h2>Ändra meddelandet</h2>
-                                        
-                                        {updateError && (
-                                            <div className="error-message" role="alert">
-                                                {updateError}
-                                            </div>
-                                        )}
-                                        
-                                        <textarea 
-                                            placeholder="Ange nytt meddelande"
-                                            value={currentMessageText}
-                                            onChange={(e) => setCurrentMessageText(e.target.value)}
-                                            className="edit-textarea"
-                                            autoFocus
-                                        />
-                                        
-                                        <input 
-                                            type="text" 
-                                            placeholder="Ange meddelandets ID för bekräftelse"
-                                            value={inputMessageId}
-                                            onChange={(e) => setInputMessageId(e.target.value)}
-                                            className="id-input"
-                                        />
-                                        
-                                        <div className="modal-buttons">
-                                            <button 
-                                                onClick={() => handleUpdate(id, currentMessageText)}
-                                                className="save-button"
-                                                disabled={!currentMessageText.trim()}
-                                            >
-                                                Spara
-                                            </button>
-                                            
-                                            <button 
-                                                onClick={closeUpdateForm}
-                                                className="cancel-button"
-                                            >
-                                                Avbryt
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-                            )}
-                        </li>
-                    ))}
-                </ul>
-            ) : (
-                <p className="empty-message">Inga meddelanden hittades</p>
-            )}
-        </div>
+            <section aria-labelledby="messages-heading">
+                <h2 id="messages-heading" className="sr-only">Meddelanden</h2>
+                
+                {loading && !messages.length ? (
+                    <p className="loading-message" aria-live="polite">Laddar meddelanden...</p>
+                ) : messages.length > 0 ? (
+                    <>
+                        <p className="message-count" aria-live="polite">
+                            Visar {messages.length} av {originalMessages.length} meddelanden
+                            {filterUser && ` för "${filterUser}"`}
+                        </p>
+                        <ul className="message-list" role="list">
+                            {messages.map((message) => (
+                                <MessageItem
+                                    key={message.id}
+                                    message={message}
+                                    onEdit={openUpdateForm}
+                                    editingMessageId={editingMessageId}
+                                    currentMessageText={currentMessageText}
+                                    inputMessageId={inputMessageId}
+                                    updateError={updateError}
+                                    onUpdate={handleUpdate}
+                                    onCloseEdit={closeUpdateForm}
+                                    onInputChange={handleMessageTextChange}
+                                    onIdChange={handleIdChange}
+                                />
+                            ))}
+                        </ul>
+                    </>
+                ) : (
+                    <p className="empty-message">
+                        {filterUser 
+                            ? `Inga meddelanden hittades för "${filterUser}"`
+                            : 'Inga meddelanden finns ännu'
+                        }
+                    </p>
+                )}
+            </section>
+        </main>
     );
 };
 
