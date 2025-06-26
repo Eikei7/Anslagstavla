@@ -417,7 +417,11 @@ const Anslagstavla = () => {
             )}
             
             <div className="header-image">
-                <img src="/img/noticeboard.jpeg" width="410" alt="Anslagstavla" />
+                <img src="../public/img/noticeboard.jpg" width="410" alt="Anslagstavla" />
+                <img src="../img/noticeboard.jpg" width="410" alt="Anslagstavla" />
+                <img src="../noticeboard.jpg" width="410" alt="Anslagstavla" />
+                <img src="/img/noticeboard.jpg" width="410" alt="Anslagstavla" />
+                <img src="./img/noticeboard.jpg" width="410" alt="Anslagstavla" />
             </div>
             
             <section className="controls" aria-label="Kontroller för meddelanden">
@@ -471,7 +475,7 @@ const Anslagstavla = () => {
                             Visar {messages.length} av {originalMessages.length} meddelanden
                             {filterUser && ` för "${filterUser}"`}
                         </p>
-                        <ul className="message-list" role="list">
+                        <ul className="message-list">
                             {messages.map((message) => (
                                 <MessageItem
                                     key={message.id}
